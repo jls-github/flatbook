@@ -1,9 +1,16 @@
 ## Creating the Application
 
-Create the application with ```rails new flatbook --api --database=postgresql```
+We'll be using Ruby 2.7.4 for this project. Make sure you're using this verison of Ruby before creating this application. You can verify this with the ```rvm list``` command. If 2.7.4 is installed, it will show up in the list. If it is your current version, it will be selected. If you do not have it installed, install it now with ```rvm install 2.7.4```, and select it as your current version with ```rvm use 2.7.4```.
 
-- The ```--api``` flag will cut out the aspects of Rails that we don't need, like creating views in our generators and removing some unnecessary middleware. See more information at their official documenation (https://guides.rubyonrails.org/api_app.html#creating-a-new-application)
-- The postgres flag configures our application to use Postgres by default. We won't be able to host with SQLite, so we will use Postgres here.
+You will also need Postgres installed on your computer for this lab. 
+
+Now we're ready to create our Rails API. Create the application with ```rails new flatbook --api --database=postgresql```
+
+Does this command look a little bit more compolicated to you than other rails commands? That's because we've added a couple of "flags". These are additional pieces of config that will save us time in creating our application.
+
+The ```--api``` flag will cut out the aspects of Rails that we don't need, like creating views in our generators and removing some unnecessary middleware. See more information at their official documenation (https://guides.rubyonrails.org/api_app.html#creating-a-new-application)
+
+The postgres flag configures our application to use Postgres by default. We won't be able to host with SQLite, so we will use Postgres here.
 
 ## Creating our First Resources
 
@@ -102,3 +109,20 @@ end
 
 We can verify that our routes are correct using the ```rails routes``` CLI command. Additionally, make sure to test your routes via Postman before continuing on. Remember, test as you go!
 
+## Hosting the application on Heroku
+
+Heroku is a service where we can host our Rails server. 
+
+### Setting up Heroku
+
+If you haven't already, sign up for a Heroku account here: https://signup.heroku.com/
+
+You will also need to download the Heroku CLI. This will give us a variety of tools we can use to manage our application directly from our terminal. You can download the Heroku CLI using the instructions on this page: https://devcenter.heroku.com/articles/heroku-cli. Note: If you're on Windows using WSL, make sure to follow the Ubuntu instructions, not the Windows instructions.
+
+Now let's put the Heroku CLI to use. We're going to log into Heroku using the CLI. To do so, use the ```heroku login``` command in your terminal. This will give you instructions for logging into your account. Once you've done so, you're good to go!
+
+### Setting up your Heroku server
+
+Before we host our application on Heroku, we need to make our Rails application compatible with our Heroku server. In your terminal, run the following command: ```bundle lock --add-platform x86_64-linux --add-platform ruby```. This command allows your Rails application to run on the linux platform used by our Heroku server. If you do not run this command, you will receive an error that says ```Failed to install gems via Bundler.```
+
+Now we need to create our Heroku server. We will again use the Heroku CLI to do so. The ```heroku create``` command will create a Heroku server for our current folder. Run ```heroku create``` in your terminal. You'll notice that it gives you a url. 
