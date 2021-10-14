@@ -125,4 +125,30 @@ Now let's put the Heroku CLI to use. We're going to log into Heroku using the CL
 
 Before we host our application on Heroku, we need to make our Rails application compatible with our Heroku server. In your terminal, run the following command: ```bundle lock --add-platform x86_64-linux --add-platform ruby```. This command allows your Rails application to run on the linux platform used by our Heroku server. If you do not run this command, you will receive an error that says ```Failed to install gems via Bundler.```
 
-Now we need to create our Heroku server. We will again use the Heroku CLI to do so. The ```heroku create``` command will create a Heroku server for our current folder. Run ```heroku create``` in your terminal. You'll notice that it gives you a url. 
+Now we need to create our Heroku server. We will again use the Heroku CLI to do so. The ```heroku create``` command will create a Heroku server for our current folder. Run ```heroku create``` in your terminal. 
+
+You'll notice that the ```heroku create``` comand gives you a url. That is the url where your server is hosted. Typing ```heroku open``` will also open your browser to that url.
+
+Now we can push our code to Heroku. We are going to use git to push our code to Heroku. Just like you push your code to Github, you can also use git to push your code elsewhere. **You will still push your code to Github as well.** Github is used for version control. Heroku is used to host your server.
+
+To push our code to Heroku, we need to specify our branch name and our origin. ```git push <branch-name> <origin>```. Your branch name will either be 'main' or 'master'. When you follow the instructions to push your code to Github, your primary branch is automatically renamed to main. However, if you have not yet pushed your code to Github, you will have to use master. The origin will always be 'heroku'. With that in mind, run the following command to push your codebase to Heroku.
+
+```git push heorku main```
+
+You'll notice that the terminal outputs steps of the build process. All of that is taking place on your Heroku server. Once that is finished, you can run ```heroku open``` to open your server in your browser.
+
+We can also access our rails server remotely. If you run ```heroku run <command>```, it will run that command on your rails server. Some helpful commands will be: 
+- ```heroku run rails db:migrate``` - to run our database migrations
+- ```heroku run rails db:seed``` - to seed our database
+- ```heroku run rails console``` - to access our heroku server's rails console
+- ```heroku run bash``` - to access a bash terminal on our server
+
+Let's go ahead and run our migrations and seeds. Note: You won't have to create the database on your Heroku server. That is already set up for you. Run the following command to migrate and seed your database.
+
+```heroku run rails db:migrate db:seed```
+
+Your heroku server is good to go! Any time you want to push your updates to the server, simply run ```git push heroku main``` again, and those updates will be propogated on your server. 
+
+## Setting up a CORS Policy
+
+Now we're read
