@@ -1,3 +1,11 @@
+# Introduction
+
+Time to put everything together! We're going to create social media application, host it on Heroku, and lock it down with Authorization/Authentication. This guide will get your backend ready. A guide on creating the frontend that access this API can be found here: LINK TBD.
+
+This guide assumes that you have already completed the previous labs on hosting and authorization.
+
+# Code-Along
+
 ## Creating the Application
 
 We'll be using Ruby 2.7.4 for this project. Make sure you're using this verison of Ruby before creating this application. You can verify this with the ```rvm list``` command. If 2.7.4 is installed, it will show up in the list. If it is your current version, it will be selected. If you do not have it installed, install it now with ```rvm install 2.7.4```, and select it as your current version with ```rvm use 2.7.4```.
@@ -35,6 +43,8 @@ Let's not forget to set up our posts>-users relationship macros! Navigate to the
 If you haven't already, go ahead and create your database and run your migrations. You can run these commands one after another with ```rails db:create db:migrate```.
 
 Now it's time to test our models. Head into your rails console and create a couple of users and a couple of posts. Make sure this relationship is set up just the way you want it to be. Developing a habit of testing as you go will save you a great deal of headache in your development career. :)
+
+Go ahead and create some seeds in your db/seeds.rb file as well before continuing.
 
 ### Adding Controller Actions
 
@@ -109,7 +119,7 @@ end
 
 We can verify that our routes are correct using the ```rails routes``` CLI command. Additionally, make sure to test your routes via Postman before continuing on. Remember, test as you go!
 
-## Hosting the application on Heroku
+## Hosting the Application on Heroku
 
 Heroku is a service where we can host our Rails server. 
 
@@ -121,7 +131,7 @@ You will also need to download the Heroku CLI. This will give us a variety of to
 
 Now let's put the Heroku CLI to use. We're going to log into Heroku using the CLI. To do so, use the ```heroku login``` command in your terminal. This will give you instructions for logging into your account. Once you've done so, you're good to go!
 
-### Setting up your Heroku server
+### Setting up Your Heroku Server
 
 Before we host our application on Heroku, we need to make our Rails application compatible with our Heroku server. In your terminal, run the following command: ```bundle lock --add-platform x86_64-linux --add-platform ruby```. This command allows your Rails application to run on the linux platform used by our Heroku server. If you do not run this command, you will receive an error that says ```Failed to install gems via Bundler.```
 
@@ -138,17 +148,53 @@ To push our code to Heroku, we need to specify our branch name and our origin. `
 You'll notice that the terminal outputs steps of the build process. All of that is taking place on your Heroku server. Once that is finished, you can run ```heroku open``` to open your server in your browser.
 
 We can also access our rails server remotely. If you run ```heroku run <command>```, it will run that command on your rails server. Some helpful commands will be: 
-- ```heroku run rails db:migrate``` - to run our database migrations
-- ```heroku run rails db:seed``` - to seed our database
-- ```heroku run rails console``` - to access our heroku server's rails console
+- ```heroku run bundle exec rails db:migrate``` - to run our database migrations
+- ```heroku run bundle exec rails db:seed``` - to seed our database
+- ```heroku run bundle exec rails console``` - to access our heroku server's rails console
 - ```heroku run bash``` - to access a bash terminal on our server
 
 Let's go ahead and run our migrations and seeds. Note: You won't have to create the database on your Heroku server. That is already set up for you. Run the following command to migrate and seed your database.
 
-```heroku run rails db:migrate db:seed```
+```heroku run bundle exec rails db:migrate db:seed```
 
 Your heroku server is good to go! Any time you want to push your updates to the server, simply run ```git push heroku main``` again, and those updates will be propogated on your server. 
 
-## Setting up a CORS Policy
+### Setting up a CORS Policy
 
-Now we're read
+CORS stands for Cross-Origin Resource Sharing. a CORS policy defines which domains can make requests to your backend via a browser. CORS policies do not actually protect your backend resources, as requests made outside of a browser ignore CORS policies. Instead, they protect your frontend from Cross-Site Request Forgery (CSRF) attacks. Whenever we host our applications, we need to add a CORS policy so that our frontends aren't vulnerable.
+
+First, we need to add a gem in our Gemfile. In the standard Rails buildout, in your Gemfile on line 26, there is a gem called rack-cors that is commented out. Go ahead and uncomment that gem and run bundle install.
+
+Second, we need to add an initializer that holds our CORS policy. Initializers are files that hold config for our Rails application. These files are run after the Rails framework is loaded and any gems or plugins are installed. They can be found in config/initializers.rb.
+
+Within config/initializers.rb, you should have a file called cors.rb.
+
+After the initial documentation section, comment back in the actual rails config section (starting with ```Rails.application.config.middleware....```). Line 10 specifies origins that you will allow to access your backend. By default, example.com is listed. When we have completed our application, we will list our frontend's url here. For now, though, go ahead and put a wildcared (*) for the allowed origin. This will allow any origin to access our API. We will change this in the future to provide more security.
+
+Your CORS initializer should look like this:
+
+```ruby
+# config/initializers/cors.rb
+
+# Be sure to restart your server when you modify this file.
+
+# Avoid CORS issues when API is called from the frontend app.
+# Handle Cross-Origin Resource Sharing (CORS) in order to accept cross-origin AJAX requests.
+
+# Read more: https://github.com/cyu/rack-cors
+
+Rails.application.config.middleware.insert_before 0, Rack::Cors do
+  allow do
+    origins '*'
+
+    resource '*',
+      headers: :any,
+      methods: [:get, :post, :put, :patch, :delete, :options, :head]
+  end
+end
+
+```
+
+Our CORS policy is now set up to allow any URL origin to access our backend.
+
+## Authorization/Authentication
